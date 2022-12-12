@@ -1,24 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import ExplorePage from "./components/ExplorePage";
+import SeatsPage from "./components/SeatsPage";
+import SessionPage from "./components/SessionPage";
+import SuccessPage from "./components/SuccessPage";
+import Titlebar from "./components/Titlebar";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Titlebar />
+      <ExplorePage />
+      {/* <SessionPage /> */}
+      {/* <SeatsPage /> */}
+      {/* <SuccessPage /> */}
+    </>
+
   );
 }
 
