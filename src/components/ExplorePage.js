@@ -1,37 +1,36 @@
 import styled from "styled-components";
-import MovieImg from "../assets/image 6.png";
-import MovieImg2 from "../assets/image 3.png";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import ScreenContainer from "../styles/ScreenContainer";
+import LoadinGif from "../assets/loading-gif.gif";
 
 export default function ExplorePage() {
+    const [movies, setMovies] = useState(null);
+
+    useEffect(() => {
+        const URL = "https://mock-api.driven.com.br/api/v8/cineflex/movies";
+        const promise = axios.get(URL);
+        promise.then((res) => setMovies(res.data));
+        promise.catch((err) => console.log(err.response));
+    }, [])
+
+    if (movies === null) {
+        return (
+            <Loading>
+                <img src={LoadinGif}></img>
+            </Loading>
+        );
+    }
+
     return (
         <ScreenContainer color={"#293845"}>
             <h1>Selecione o Filme</h1>
-            <MoviesContainer img={MovieImg}>
-                <div>
-                    <img src={MovieImg} />
-                </div>
-                <div>
-                    <img src={MovieImg2} />
-                </div>
-                <div>
-                    <img src={MovieImg} />
-                </div>
-                <div>
-                    <img src={MovieImg2} />
-                </div>
-                <div>
-                    <img src={MovieImg} />
-                </div>
-                <div>
-                    <img src={MovieImg2} />
-                </div>
-                <div>
-                    <img src={MovieImg} />
-                </div>
-                <div>
-                    <img src={MovieImg2} />
-                </div>
+            <MoviesContainer>
+                {movies.map((movie) => (
+                    <Movie key={movie.id}>
+                        <img src={movie.posterURL} alt={movie.title} />
+                    </Movie>
+                ))}
             </MoviesContainer>
         </ScreenContainer>
     );
@@ -43,17 +42,24 @@ const MoviesContainer = styled.div`
     flex-wrap: wrap;
     justify-content: space-evenly;
     box-sizing: border-box;
-    div {
-        background: #FFFFFF;
-        width: 145px;
-        height: 209px;
-        margin: 6px 0;
-        padding: 8px;
-        box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.1);
-        border-radius: 3px;
-        img {
-            width: 100%;
-            height: 100%;
-        }
+`
+const Movie = styled.div`
+    background: #FFFFFF;
+    width: 145px;
+    height: 209px;
+    margin: 6px 0;
+    padding: 8px;
+    box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    img {
+        width: 100%;
+        height: 100%;
     }
+`
+const Loading = styled.div`
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `
