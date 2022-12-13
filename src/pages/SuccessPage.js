@@ -1,28 +1,35 @@
 import styled from "styled-components";
 import ScreenContainer from "../styles/ScreenContainer";
+import { Link, useParams } from "react-router-dom";
 
 export default function SuccessPage() {
+    const { name, cpf, title, sname } = useParams();
+    console.log(name);
+    console.log(cpf);
+
     return (
         <>
             <ScreenContainer color={"#247A6B"}>
                 <h1>Pedido feito com sucesso!</h1>
-                <PurchaseInfo>
+                <PurchaseInfo data-test="movie-info">
                     <h2>Filme e sessão</h2>
-                    <p>Enola Holmes</p>
+                    <p>{title}</p>
                     <p>24/06/2021 15:00</p>
                 </PurchaseInfo>
-                <PurchaseInfo>
+                <PurchaseInfo data-test="seats-info">
                     <h2>Ingressos</h2>
                     <p>Assento 15</p>
                     <p>Assento 16</p>
                 </PurchaseInfo>
-                <PurchaseInfo>
+                <PurchaseInfo data-test="client-info">
                     <h2>Comprador</h2>
-                    <p>Nome: João da Silva Sauro</p>
-                    <p>CPF: 123.456.789-10</p>
+                    <p>Nome: {name}</p>
+                    <p>CPF: {cpf}</p>
                 </PurchaseInfo>
-                <BackHomeButton>
-                    <p>Voltar pra Home</p>
+                <BackHomeButton data-test="go-home-btn">
+                    <Link to="/">
+                        <p>Voltar pra Home</p>
+                    </Link>
                 </BackHomeButton>
             </ScreenContainer>
         </>
@@ -65,6 +72,9 @@ const BackHomeButton = styled.div`
         justify-content: center;
         letter-spacing: 0.04em;
         color: #FFFFFF;
-    }  
+    }
+    a {
+        text-decoration: none;
+    }
 
 `

@@ -1,10 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
-import ScreenContainer from "../styles/ScreenContainer";
-import LoadinGif from "../assets/loading-gif.gif";
 import Seat from "../components/Seat";
+import LoadinGif from "../assets/loading-gif.gif";
+import ScreenContainer from "../styles/ScreenContainer";
 
 const selected = "#1AAE9E";
 const available = "#C3CFD9";
@@ -14,6 +14,13 @@ export default function SeatsPage() {
     const { sessionId } = useParams();
     const [session, setSession] = useState(undefined);
     const [selectedSeats, setSelectedSeats] = useState([]);
+    console.log(selectedSeats)
+    const navigate = useNavigate();
+
+    const [ids, setIds] = useState([]);
+    const [name, setName] = useState("");
+    const [cpf, setcpf] = useState("");
+
 
     useEffect(() => {
         const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${sessionId}/seats`;
@@ -31,7 +38,7 @@ export default function SeatsPage() {
     }
 
     function handleSeat(seat) {
-        console.log(seat)
+        // console.log(seat)
         // //Se o assento estiver indisponível não faz nada
         if (seat.isAvailable === false) {
             return alert("Esse assento não está disponível");
@@ -42,12 +49,32 @@ export default function SeatsPage() {
         // //Se o estado atual é não selecionado precisamos remover o assento
         if (!seat.selected) {
             const filteredSeats = selectedSeats.filter((s) => !(s.id === seat.id));
+            const filteredIds = ids.filter((id) => !(id === seat.id));
             setSelectedSeats([...filteredSeats]);
+            setIds([...filteredIds]);
             return;
         }
         // //Adicionamos o assento a lista de assentos selecionados
         setSelectedSeats([...selectedSeats, seat]);
+        setIds([...ids, seat.id]);
         return;
+    }
+
+    function reserveSeats(e) {
+        e.preventDefault();
+        const seats = { ids, name, cpf };
+        const request = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", seats);
+        request.then((resp) => {
+            console.log(resp.data);
+            navigate(`/success/${seats.name}/${seats.cpf}/${session.movie.title}`);
+        });
+        request.catch((err) => console.log(err));
+
+        console.log(seats);
+
+        setIds("");
+        setName("");
+        setcpf("");
     }
 
     return (
@@ -56,7 +83,7 @@ export default function SeatsPage() {
                 <h1>Selecione o(s) assento(s)</h1>
                 <SeatsContainer>
                     {session.seats.map((seat) =>
-                        <Seat seat={seat} handleSeat={handleSeat} />
+                        <Seat key={seat.id} seat={seat} handleSeat={handleSeat} />
                     )}
                 </SeatsContainer>
                 <ColorsLegendContainer>
@@ -73,17 +100,20 @@ export default function SeatsPage() {
                         <p>Indisponível</p>
                     </div>
                 </ColorsLegendContainer>
-                <ClientInfo>
-                    Nome do Comprador:
-                    <input placeholder="Digite seu nome..."></input>
-                    CPF do Comprador:
-                    <input placeholder="Digite seu CPF..."></input>
-                </ClientInfo>
-                <ReserveButton>
-                    <p>Reservar assento(s)</p>
-                </ReserveButton>
+                <form onSubmit={reserveSeats}>
+                    <ClientInfo>
+                        Nome do Comprador:
+                        <input data-test="client-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Digite seu nome..."></input>
+                        CPF do Comprador:
+                        <input data-test="client-cpf" type="number" value={cpf} onChange={(e) => setcpf(e.target.value)} placeholder="Digite seu CPF..."></input>
+                    </ClientInfo>
+
+                    <ReserveButton>
+                        <button data-test="book-seat-btn">Reservar assento(s)</button>
+                    </ReserveButton>
+                </form>
             </ScreenContainer>
-            <Footer>
+            <Footer data-test="footer">
                 <div>
                     <img src={session.movie.posterURL} />
                 </div>
@@ -177,8 +207,8 @@ const ClientInfo = styled.div`
 const ReserveButton = styled.div`
     display: flex;
     justify-content: center;
-    p {
-        background-color: #E8833A;;
+    button {
+        background-color: #E8833A;
         width: 225px;
         height: 42px;
         border-radius: 3px;
@@ -191,6 +221,10 @@ const ReserveButton = styled.div`
         justify-content: center;
         letter-spacing: 0.04em;
         color: #FFFFFF;
+        border: none;
+        &:hover {
+            background-color: #E9953B;
+        } 
     }  
 
 `

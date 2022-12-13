@@ -29,19 +29,19 @@ export default function SessionPage() {
             <ScreenContainer>
                 <h1>Selecione o Horário</h1>
                 {movie.days.map(({ id, weekday, date, showtimes }) => (
-                    <Schedules key={id}>
+                    <Schedules data-test="movie-day" key={id}>
                         <h2 >{weekday} - {date}</h2>
                         <Buttons>
                             {showtimes.map(({ name, id }) => (
                                 <Link key={id} to={`/seats/${id}`}>
-                                    <li>{name}</li>
+                                    <li data-test="showtime">{name}</li>
                                 </Link>
                             ))}
                         </Buttons>
                     </Schedules>
                 ))}
             </ScreenContainer>
-            <Footer>
+            <Footer data-test="footer">
                 <div>
                     <img src={movie.posterURL} />
                 </div>

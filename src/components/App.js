@@ -13,7 +13,7 @@ function App() {
         <Route path="/" element={<ExplorePage />} />
         <Route path="/sessions/:movieId" element={<SessionPage />} />
         <Route path="/seats/:sessionId" element={<SeatsPage />} />
-        <Route path="/success" element={<SuccessPage />} />
+        <Route path="/success/:name/:cpf/:title" element={<SuccessPage />} />
       </Routes>
     </BrowserRouter>
 

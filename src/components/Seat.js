@@ -9,6 +9,7 @@ export default function Seat({ seat, isSelected, handleSeat }) {
         <>
             {!seat.selected ? (
                 <SeatStyle
+                    data-test="seat"
                     key={seat.id}
                     color={seat.isAvailable ? available : unavailable}
                     onClick={() => handleSeat(seat)}
@@ -17,6 +18,7 @@ export default function Seat({ seat, isSelected, handleSeat }) {
                 </SeatStyle>
             ) : (
                 <SeatStyle
+                    data-test="seat"
                     key={seat.id}
                     color={selected}
                     onClick={() => handleSeat(seat)}

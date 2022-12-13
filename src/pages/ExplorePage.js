@@ -29,7 +29,7 @@ export default function ExplorePage() {
             <MoviesContainer>
                 {movies.map((movie) => (
                     <Link key={movie.id} to={`/sessions/${movie.id}`}>
-                        <Movie>
+                        <Movie data-test="movie">
                             <img src={movie.posterURL} alt={movie.title} />
                         </Movie>
                     </Link>
