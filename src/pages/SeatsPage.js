@@ -2,9 +2,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import MovieImg from "../assets/image 6.png";
 import ScreenContainer from "../styles/ScreenContainer";
 import LoadinGif from "../assets/loading-gif.gif";
+import Seat from "../components/Seat";
 
 const selected = "#1AAE9E";
 const available = "#C3CFD9";
@@ -13,6 +13,7 @@ const unavailable = "#FBE192";
 export default function SeatsPage() {
     const { sessionId } = useParams();
     const [session, setSession] = useState(undefined);
+    const [selectedSeats, setSelectedSeats] = useState([]);
 
     useEffect(() => {
         const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${sessionId}/seats`;
@@ -29,20 +30,35 @@ export default function SeatsPage() {
         );
     }
 
+    function handleSeat(seat) {
+        console.log(seat)
+        // //Se o assento estiver indisponível não faz nada
+        if (seat.isAvailable === false) {
+            return;
+        }
+        // //Toggle - "Liga e desliga" a seleção
+        seat.selected = !seat.selected;
+
+        // //Se o estado atual é não selecionado precisamos remover o assento
+        if (!seat.selected) {
+            const filteredSeats = selectedSeats.filter((s) => !(s.id === seat.id));
+            setSelectedSeats([...filteredSeats]);
+            return;
+        }
+        // //Adicionamos o assento a lista de assentos selecionados
+        setSelectedSeats([...selectedSeats, seat]);
+        return;
+    }
+
     return (
         <>
             <ScreenContainer>
                 <h1>Selecione o(s) assento(s)</h1>
-                <Seats>
-                    {session.seats.map(({ id, name, isAvailable }) => (
-                        <Seat
-                            key={id}
-                            isAvailable={isAvailable}
-                        >
-                            {name}
-                        </Seat>
-                    ))}
-                </Seats>
+                <SeatsContainer>
+                    {session.seats.map((seat) =>
+                        <Seat seat={seat} handleSeat={handleSeat} />
+                    )}
+                </SeatsContainer>
                 <ColorsLegendContainer>
                     <div>
                         <ColorLegend color={selected}></ColorLegend>
@@ -80,29 +96,13 @@ export default function SeatsPage() {
     );
 }
 
-const Seats = styled.div`
+const SeatsContainer = styled.div`
     width: 100%;
     box-sizing: border-box;
     padding: 0 24px 0 16px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-`
-const Seat = styled.div`
-    background-color: ${(props) => props.isAvailable ? available : unavailable};
-    width: 26px;
-    height: 26px;
-    margin: 0 3px 18px 3px;
-    border: 1px solid #808F9D;
-    border-radius: 17px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-    font-size: 11px;
-    line-height: 13px;
-    color: #000000;
 `
 
 const ColorsLegendContainer = styled.div`
