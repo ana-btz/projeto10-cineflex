@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 import MovieImg from "../assets/image 6.png";
 import ScreenContainer from "../styles/ScreenContainer";
@@ -34,7 +34,9 @@ export default function SessionPage() {
                         <h2 >{weekday} - {date}</h2>
                         <Buttons>
                             {showtimes.map(({ name, id }) => (
-                                <li key={id}>{name}</li>
+                                <Link key={id} to={`/seats/${id}`}>
+                                    <li>{name}</li>
+                                </Link>
                             ))}
                         </Buttons>
                     </Schedules>
@@ -75,7 +77,10 @@ const Buttons = styled.ul`
         color: #FFFFFF;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: center;        
+    }
+    a {
+       text-decoration: none;
     }
 `
 const Footer = styled.div`
