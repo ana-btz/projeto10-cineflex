@@ -11,7 +11,7 @@ export default function ExplorePage() {
     useEffect(() => {
         const URL = "https://mock-api.driven.com.br/api/v8/cineflex/movies";
         const promise = axios.get(URL);
-        promise.then((res) => setMovies(res.data));
+        promise.then((resp) => setMovies(resp.data));
         promise.catch((err) => console.log(err.response));
     }, [])
 
@@ -28,8 +28,8 @@ export default function ExplorePage() {
             <h1>Selecione o Filme</h1>
             <MoviesContainer>
                 {movies.map((movie) => (
-                    <Link to={`/sessoes/:${movie.id}`}>
-                        <Movie key={movie.id}>
+                    <Link key={movie.id} to={`/sessions/${movie.id}`}>
+                        <Movie>
                             <img src={movie.posterURL} alt={movie.title} />
                         </Movie>
                     </Link>

@@ -1,30 +1,50 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import MovieImg from "../assets/image 6.png";
 import ScreenContainer from "../styles/ScreenContainer";
+import LoadinGif from "../assets/loading-gif.gif";
 
 export default function SessionPage() {
+    const { movieId } = useParams();
+    const [movie, setMovie] = useState(undefined);
+
+    useEffect(() => {
+        const URL = `https://mock-api.driven.com.br/api/v8/cineflex/movies/${movieId}/showtimes`;
+        const promise = axios.get(URL);
+        promise.then((resp) => setMovie(resp.data));
+        promise.catch((err) => console.log(err.response))
+    }, []);
+
+    if (movie === undefined) {
+        return (
+            <Loading>
+                <img src={LoadinGif}></img>
+            </Loading>
+        );
+    }
+
     return (
         <>
             <ScreenContainer>
                 <h1>Selecione o Horário</h1>
-                <Schedules>
-                    <h2>Quinta-feira - 24/06/2021</h2>
-                    <Buttons>
-                        <li>15:00</li>
-                        <li>19:00</li>
-                    </Buttons>
-                    <h2>Sexta-feira - 25/06/2021</h2>
-                    <Buttons>
-                        <li>15:00</li>
-                        <li>19:00</li>
-                    </Buttons>
-                </Schedules>
+                {movie.days.map(({ id, weekday, date, showtimes }) => (
+                    <Schedules key={id}>
+                        <h2 >{weekday} - {date}</h2>
+                        <Buttons>
+                            {showtimes.map(({ name, id }) => (
+                                <li key={id}>{name}</li>
+                            ))}
+                        </Buttons>
+                    </Schedules>
+                ))}
             </ScreenContainer>
             <Footer>
                 <div>
-                    <img src={MovieImg} />
+                    <img src={movie.posterURL} />
                 </div>
-                <h1>Enola Homes</h1>
+                <h1>{movie.title}</h1>
             </Footer>
         </>
     );
@@ -41,9 +61,8 @@ const Schedules = styled.div`
         line-height: 23px;
     }
 `
-
 const Buttons = styled.ul`
-display: flex;
+    display: flex;
     li {
         background-color: #E8833A;
         width: 83px;
@@ -59,7 +78,6 @@ display: flex;
         align-items: center;
     }
 `
-
 const Footer = styled.div`
     background-color: #DFE6ED;
     position: fixed;
@@ -91,4 +109,11 @@ const Footer = styled.div`
         line-height: 30px;
         color: #293845;
     }
+`
+const Loading = styled.div`
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `
