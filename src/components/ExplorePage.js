@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import ScreenContainer from "../styles/ScreenContainer";
 import LoadinGif from "../assets/loading-gif.gif";
+import { Link } from "react-router-dom";
 
 export default function ExplorePage() {
     const [movies, setMovies] = useState(null);
@@ -27,9 +28,11 @@ export default function ExplorePage() {
             <h1>Selecione o Filme</h1>
             <MoviesContainer>
                 {movies.map((movie) => (
-                    <Movie key={movie.id}>
-                        <img src={movie.posterURL} alt={movie.title} />
-                    </Movie>
+                    <Link to={`/sessoes/:${movie.id}`}>
+                        <Movie key={movie.id}>
+                            <img src={movie.posterURL} alt={movie.title} />
+                        </Movie>
+                    </Link>
                 ))}
             </MoviesContainer>
         </ScreenContainer>
