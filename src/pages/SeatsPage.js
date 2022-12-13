@@ -34,7 +34,7 @@ export default function SeatsPage() {
         console.log(seat)
         // //Se o assento estiver indisponível não faz nada
         if (seat.isAvailable === false) {
-            return;
+            return alert("Esse assento não está disponível");
         }
         // //Toggle - "Liga e desliga" a seleção
         seat.selected = !seat.selected;
