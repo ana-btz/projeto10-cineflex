@@ -1,42 +1,46 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import MovieImg from "../assets/image 6.png";
 import ScreenContainer from "../styles/ScreenContainer";
-
-const seats = [
-    { id: 1, status: "available" },
-    { id: 2, status: "unavailable" },
-    { id: 3, status: "unavailable" },
-    { id: 4, status: "unavailable" },
-    { id: 5, status: "available" },
-    { id: 6, status: "available" },
-    { id: 7, status: "available" },
-    { id: 8, status: "available" },
-    { id: 9, status: "available" },
-    { id: 10, status: "available" },
-    { id: 11, status: "unavailable" },
-    { id: 12, status: "available" },
-    { id: 13, status: "available" },
-    { id: 14, status: "available" },
-    { id: 15, status: "available" },
-    { id: 16, status: "available" },
-    { id: 17, status: "available" },
-    { id: 18, status: "available" },
-    { id: 19, status: "available" },
-    { id: 20, status: "available" }
-];
+import LoadinGif from "../assets/loading-gif.gif";
 
 const selected = "#1AAE9E";
 const available = "#C3CFD9";
 const unavailable = "#FBE192";
 
 export default function SeatsPage() {
+    const { sessionId } = useParams();
+    const [session, setSession] = useState(undefined);
+
+    useEffect(() => {
+        const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${sessionId}/seats`;
+        const promise = axios.get(URL);
+        promise.then((resp) => setSession(resp.data));
+        promise.catch((err) => console.log(err));
+    }, []);
+
+    if (session === undefined) {
+        return (
+            <Loading>
+                <img src={LoadinGif}></img>
+            </Loading>
+        );
+    }
+
     return (
         <>
             <ScreenContainer>
                 <h1>Selecione o(s) assento(s)</h1>
                 <Seats>
-                    {seats.map((seat) => (
-                        <div>{seat.id}</div>
+                    {session.seats.map(({ id, name, isAvailable }) => (
+                        <Seat
+                            key={id}
+                            isAvailable={isAvailable}
+                        >
+                            {name}
+                        </Seat>
                     ))}
                 </Seats>
                 <ColorsLegendContainer>
@@ -65,11 +69,11 @@ export default function SeatsPage() {
             </ScreenContainer>
             <Footer>
                 <div>
-                    <img src={MovieImg} />
+                    <img src={session.movie.posterURL} />
                 </div>
                 <span>
-                    <p>Enola Homes</p>
-                    <p>Quinta-feira - 15:00</p>
+                    <p>{session.movie.title}</p>
+                    <p>{session.day.weekday} - {session.name}</p>
                 </span>
             </Footer>
         </>
@@ -83,23 +87,24 @@ const Seats = styled.div`
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    div {
-        background-color: #C3CFD9;
-        width: 26px;
-        height: 26px;
-        margin: 0 3px 18px 3px;
-        border: 1px solid #808F9D;
-        border-radius: 17px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: 'Roboto', sans-serif;
-        font-weight: 400;
-        font-size: 11px;
-        line-height: 13px;
-        color: #000000;
-    }
 `
+const Seat = styled.div`
+    background-color: ${(props) => props.isAvailable ? available : unavailable};
+    width: 26px;
+    height: 26px;
+    margin: 0 3px 18px 3px;
+    border: 1px solid #808F9D;
+    border-radius: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    line-height: 13px;
+    color: #000000;
+`
+
 const ColorsLegendContainer = styled.div`
     width: 100%;
     display: flex;
@@ -220,4 +225,11 @@ const Footer = styled.div`
         line-height: 30px;
         color: #293845;
     }
+`
+const Loading = styled.div`
+    width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 `

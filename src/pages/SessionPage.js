@@ -2,7 +2,6 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
-import MovieImg from "../assets/image 6.png";
 import ScreenContainer from "../styles/ScreenContainer";
 import LoadinGif from "../assets/loading-gif.gif";
 
